@@ -20,11 +20,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.validateIntlKeys",
+        "command": "intlHelper.validateIntlKeys",
         "title": "Intl: Validate Keys"
       },
       {
-        "command": "extension.autoReplace",
+        "command": "intlHelper.autoReplace",
         "title": "Intl: Auto Replace"
       }
     ]
