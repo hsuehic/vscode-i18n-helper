@@ -1,6 +1,6 @@
 {
   "name": "vscode-intl-helper",
-  "displayName": "vscode-intl-helper",
+  "displayName": "Intl Helper",
   "description": "A plugin help to do internationalization work",
   "version": "0.0.1",
   "publisher": "Xiaowei",
@@ -18,14 +18,47 @@
   ],
   "main": "./out/extension",
   "contributes": {
+    "configuration": [
+      {
+        "title": "Intl Helper",
+        "type": "object",
+        "properties": {
+          "intl.pattern": {
+            "type": "string",
+            "default": "(?<=[\\s{(])(t\\('([a-zA-Z][a-zA-Z0-9._-]*)'\\))|(t\\(\"([a-zA-Z][a-zA-Z0-9._-]*)\"\\))",
+            "description": "Intl statement pattern"
+          },
+          "intl.dictionaryFilePath": {
+            "type": "string",
+            "default": "locale/en.json",
+            "description": "relative path of json/javascript file contains the dictionary"
+          }
+        }
+      }
+    ],
     "commands": [
       {
         "command": "intlHelper.validateIntlKeys",
-        "title": "Intl: Validate Keys"
+        "title": "Validate Keys",
+        "category": "Intl"
       },
       {
         "command": "intlHelper.autoReplace",
-        "title": "Intl: Auto Replace"
+        "title": "Auto Replace",
+        "category": "Intl"
+      },
+      {
+        "command": "intlHelper.highlight",
+        "title": "Highlight",
+        "category": "Intl"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "intlHelper.highlight",
+        "key": "alt+h",
+        "mac": "ctrl+h",
+        "when": "editorTextFocus"
       }
     ]
   },
@@ -37,10 +70,13 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "^2.6.1",
-    "vscode": "^1.1.21",
-    "tslint": "^5.8.0",
+    "@types/mocha": "^2.2.42",
     "@types/node": "^8.10.25",
-    "@types/mocha": "^2.2.42"
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.21"
+  },
+  "dependencies": {
+    "esprima": "^4.0.1"
   }
 }
