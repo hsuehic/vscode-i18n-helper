@@ -115,12 +115,6 @@ export function activate(context: ExtensionContext) {
   function updateDecorations() {
     if (activeTextEditor) {
       let document = activeTextEditor.document;
-      try {
-        let r2 = /?<=[\s{(]((intl('([a-zA-Z][a-zA-Z0-9._-]*)'))|(intl("([a-zA-Z][a-zA-Z0-9._-]*)")))/;
-      } catch (exp) {
-        console.error(exp);
-      }
-
       if (document) {
         try {
           let text = document.getText();
