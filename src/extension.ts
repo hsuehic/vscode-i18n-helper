@@ -27,15 +27,15 @@ let dictionaryWatcher: FileSystemWatcher | undefined;
 let dictionary: object = {};
 
 const decorationType = window.createTextEditorDecorationType({
-  backgroundColor: '#eeee00',
+  backgroundColor: 'rgba(233, 233, 0, 0.5)',
   color: '#ffffff'
 });
 
 function getIntlKeyDecoration(match: RegExpMatchArray) {
   const len = match.length;
-  const key = match[1];
+  let key = match[1];
   for (let i = 2; i < len; i++) {
-    key = key || match[i];
+    key = match[i] || key;
   }
   let startIndex = match.index + match[0].indexOf(key);
   let endIndex = startIndex + key.length;
@@ -115,17 +115,27 @@ export function activate(context: ExtensionContext) {
   function updateDecorations() {
     if (activeTextEditor) {
       let document = activeTextEditor.document;
+      try {
+        let r2 = /?<=[\s{(]((intl('([a-zA-Z][a-zA-Z0-9._-]*)'))|(intl("([a-zA-Z][a-zA-Z0-9._-]*)")))/;
+      } catch (exp) {
+        console.error(exp);
+      }
+
       if (document) {
-        let text: string = document.getText();
-        let intlKeys: DecorationOptions[] = [];
-        let pattern = getConfig(KEY_INTL_STATEMENT_PATTERN);
-        let reg = new RegExp(pattern, 'igm');
-        let match = reg.exec(text);
-        while (match) {
-          intlKeys.push(getIntlKeyDecoration(match));
-          match = reg.exec(text);
+        try {
+          let text = document.getText();
+          let intlKeys: DecorationOptions[] = [];
+          let pattern = getConfig(KEY_INTL_STATEMENT_PATTERN);
+          let reg = new RegExp(pattern, 'igm');
+          let match = reg.exec(text);
+          while (match) {
+            intlKeys.push(getIntlKeyDecoration(match));
+            match = reg.exec(text);
+          }
+          activeTextEditor.setDecorations(decorationType, intlKeys);
+        } catch (ex) {
+          console.error(ex);
         }
-        activeTextEditor.setDecorations(decorationType, intlKeys);
       }
     }
   }
@@ -166,4 +176,4 @@ export function activate(context: ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
