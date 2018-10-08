@@ -16,7 +16,8 @@ import {
   workspace,
   FileSystemWatcher,
   DecorationOptions,
-  Range
+  Range,
+  CompletionItemKind
 } from 'vscode';
 import { getConfig } from './config';
 import { createIntlCompletionItem } from './createIntlCompletionItem';
@@ -25,6 +26,7 @@ import { getDictionary } from './getDictionary';
 let completionItems: CompletionItem[] = [];
 let dictionaryWatcher: FileSystemWatcher | undefined;
 let dictionary: object = {};
+
 
 const decorationType = window.createTextEditorDecorationType({
   backgroundColor: 'rgba(233, 233, 0, 0.5)',
