@@ -13,6 +13,9 @@
         "comments": false,
         "strings": false
     },
+    "prettier.jsxBracketSameLine": true,
+    "prettier.parser": "flow",
+    "prettier.singleQuote": true,
     "emmet.showAbbreviationSuggestions": false,
     "emmet.showExpandedAbbreviation": "inMarkupAndStylesheetFilesOnly"
 }
