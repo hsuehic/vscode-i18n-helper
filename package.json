@@ -20,44 +20,94 @@
   "contributes": {
     "configuration": [
       {
-        "title": "Intl Helper",
+        "title": "I18n Helper",
         "type": "object",
         "properties": {
-          "intl.pattern": {
+          "i18n.pattern": {
             "type": "string",
-            "default": "(?<=[\\s{(])(t\\('([a-zA-Z][a-zA-Z0-9._-]*)'\\))|(t\\(\"([a-zA-Z][a-zA-Z0-9._-]*)\"\\))",
+            "default": "[\\s\\{(]intl\\(('|\\\")([a-zA-Z)[0-9A-Za-z-_\\.]*)\\1\\)",
             "description": "Intl statement pattern"
           },
-          "intl.dictionaryFilePath": {
+          "i18n.dictionaryFilePath": {
             "type": "string",
-            "default": "locale/en.json",
+            "default": "src/locale/en.json",
             "description": "relative path of json/javascript file contains the dictionary"
+          },
+          "i18n.functionName": {
+            "type": "string",
+            "default": "intl",
+            "description": "name i18n function"
           }
         }
       }
     ],
     "commands": [
       {
-        "command": "intlHelper.validateIntlKeys",
-        "title": "Validate Keys",
+        "command": "intlHelper.disableValidation",
+        "title": "Disable validation",
         "category": "Intl"
       },
       {
-        "command": "intlHelper.autoReplace",
-        "title": "Auto Replace",
+        "command": "intlHelper.enableValidation",
+        "title": "Enable validation",
         "category": "Intl"
       },
       {
-        "command": "intlHelper.highlight",
-        "title": "Highlight",
+        "command": "intlHelper.replaceWithI18n",
+        "title": "Replace selection with i18n statement",
+        "category": "Intl"
+      },
+      {
+        "command": "intlHelper.replaceWithI18nContainer",
+        "title": "Replace selection with i18n container statement",
+        "category": "Intl"
+      },
+      {
+        "command": "intlHelper.replaceAllWithI18n",
+        "title": "Replace all literal with i18n statement",
+        "category": "Intl"
+      },
+      {
+        "command": "intlHelper.replaceAllWithI18nContainer",
+        "title": "Replace all literal with i18n container statement",
         "category": "Intl"
       }
     ],
     "keybindings": [
       {
-        "command": "intlHelper.highlight",
-        "key": "alt+h",
-        "mac": "ctrl+h",
+        "command": "intlHelper.replaceWithI18n",
+        "key": "ctrl+alt+1",
+        "mac": "cmd+alt+1",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "intlHelper.replaceWithI18nContainer",
+        "key": "ctrl+alt+2",
+        "mac": "cmd+alt+2",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "intlHelper.replaceCurrentDocumentWithI18n",
+        "key": "ctrl+alt+3",
+        "mac": "cmd+alt+3",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "intlHelper.replaceAllDocumentsWithI18n",
+        "key": "ctrl+alt+4",
+        "mac": "cmd+alt+4",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "intlHelper.enableValidation",
+        "key": "ctrl+alt+5",
+        "mac": "cmd+alt+5",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "intlHelper.disableValidation",
+        "key": "ctrl+alt+6",
+        "mac": "cmd+alt+6",
         "when": "editorTextFocus"
       }
     ]
