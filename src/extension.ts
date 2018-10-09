@@ -17,16 +17,21 @@ import {
   FileSystemWatcher,
   DecorationOptions,
   Range,
-  CompletionItemKind
+  CompletionItemKind,
+  WorkspaceEdit
 } from 'vscode';
 import { getConfig } from './config';
 import { createIntlCompletionItem } from './createIntlCompletionItem';
 import { getDictionary } from './getDictionary';
+import {
+  i18nReplace,
+  i18nReplaceCurrentDocument,
+  i18nReplaceAllDocuments
+} from './utils';
 
 let completionItems: CompletionItem[] = [];
 let dictionaryWatcher: FileSystemWatcher | undefined;
-let dictionary: object = {};
-
+let dictionary: Object = {};
 
 const decorationType = window.createTextEditorDecorationType({
   backgroundColor: 'rgba(233, 233, 0, 0.5)',
@@ -57,33 +62,51 @@ export function activate(context: ExtensionContext) {
   dictionary = getDictionary();
   let activeTextEditor = window.activeTextEditor;
 
-  // Verify whether all intl key exists.
-  const disposable = commands.registerCommand(
-    'intlHelper.validateIntlKeys',
+  // enable validation
+  const disposableEnableValidation = commands.registerCommand(
+    'intlHelper.enableValidation',
     () => {
-      // The code you place here will be executed every time your command is executed
-
-      // Display a message box to the user
-      console.log(new Date());
-      window.showErrorMessage('Thare are some errors');
+      window.showInformationMessage('I18n validation enabled');
     }
   );
 
-  // enable auto replace
-  const disposableAutoReplace = commands.registerCommand(
-    'intlHelper.autoReplace',
+  // disable validation
+  const disposableDisableValidation = commands.registerCommand(
+    'intlHelper.disableValidation',
     () => {
-      console.log(new Date());
-      window.showInformationMessage('Replaced');
+      window.showInformationMessage('I18n validation disabled');
     }
   );
 
-  // highlight all the intl statements
-  const disposableHighlight = commands.registerCommand(
-    'intlHelper.highlight',
+  // replace selection with i18n statement
+  const disposableReplaceWithI18n = commands.registerCommand(
+    'intlHelper.replaceWithI18n',
     () => {
-      console.log('highlight');
-      console.log(new Date());
+      i18nReplace(dictionary, false);
+    }
+  );
+
+  // replace selection with i18n container statement
+  const disposableReplaceWithI18nContainer = commands.registerCommand(
+    'intlHelper.replaceWithI18nContainer',
+    () => {
+      i18nReplace(dictionary, true);
+    }
+  );
+
+  // replace all literal with i18n statement
+  const disposableReplaceAllWithI18n = commands.registerCommand(
+    'intlHelper.replaceCurrentDocumentWithI18n',
+    () => {
+      i18nReplaceCurrentDocument(dictionary);
+    }
+  );
+
+  // replace all literal with i18n container statement
+  const disposableReplaceAllWithI18nContainer = commands.registerCommand(
+    'intlHelper.replaceAllDocumentsWithI18n',
+    () => {
+      i18nReplaceAllDocuments(dictionary);
     }
   );
 
@@ -162,14 +185,19 @@ export function activate(context: ExtensionContext) {
   const disposableDictionaryWatcher = dictionaryWatcher.onDidChange(e => {
     completionItems = [createIntlCompletionItem()];
     dictionary = getDictionary();
+    console.log('Dictionary updated:');
+    console.log(JSON.stringify(dictionary));
     triggerUpdateDecorations();
   });
 
-  context.subscriptions.push(disposable);
-  context.subscriptions.push(disposableAutoReplace);
-  context.subscriptions.push(disposableDictionaryWatcher);
+  context.subscriptions.push(disposableDisableValidation);
+  context.subscriptions.push(disposableEnableValidation);
+  context.subscriptions.push(disposableReplaceAllWithI18n);
+  context.subscriptions.push(disposableReplaceAllWithI18nContainer);
+  context.subscriptions.push(disposableReplaceWithI18n);
+  context.subscriptions.push(disposableReplaceWithI18nContainer);
   context.subscriptions.push(disposableCompletion);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
