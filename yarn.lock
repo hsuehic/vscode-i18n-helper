@@ -100,6 +100,18 @@
   resolved "https://npm.garenanow.com/@types%2fnode/-/node-8.10.32.tgz#f8df7c32975e36e1215d22ae5f087752931c1e4a"
   integrity sha512-8OfXpkB3E0jhpcpyVlqJDV5mkXlrsJrDZR7q0uss8SBdW8IxNdx/J2o5m7cM2qbFzyd/o+aV5Z4OJcIukI6UlA==
 
+acorn-jsx@^4.1.1:
+  version "4.1.1"
+  resolved "https://npm.garenanow.com/acorn-jsx/-/acorn-jsx-4.1.1.tgz#e8e41e48ea2fe0c896740610ab6a4ffd8add225e"
+  integrity sha512-JY+iV6r+cO21KtntVvFkD+iqjtdpRUpGqKWgfkCdZq1R+kbreEl8EcdcJR4SmiIgsIQT33s6QzheQ9a275Q8xw==
+  dependencies:
+    acorn "^5.0.3"
+
+acorn@^5.0.3, acorn@^5.6.0:
+  version "5.7.3"
+  resolved "https://npm.garenanow.com/acorn/-/acorn-5.7.3.tgz#67aa231bf8812974b85235a96771eb6bd07ea279"
+  integrity sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw==
+
 ajv@^5.3.0:
   version "5.5.2"
   resolved "https://npm.garenanow.com/ajv/-/ajv-5.5.2.tgz#73b5eeca3fab653e3d3f9422b341ad42205dc965"
@@ -527,6 +539,14 @@ eslint-visitor-keys@^1.0.0:
   resolved "https://npm.garenanow.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
   integrity sha512-qzm/XxIbxm/FHyH341ZrbnMUpe+5Bocte9xkmFMzPMjRaZMcXww+MpBptFvtU+79L362nqiLhekCxCxDPaUMBQ==
 
+espree@^4.0.0:
+  version "4.0.0"
+  resolved "https://npm.garenanow.com/espree/-/espree-4.0.0.tgz#253998f20a0f82db5d866385799d912a83a36634"
+  integrity sha512-kapdTCt1bjmspxStVKX6huolXVV5ZfyZguY1lcfhVVZstce3bqxH9mcLzNn3/mlgW6wQ732+0fuG9v7h0ZQoKg==
+  dependencies:
+    acorn "^5.6.0"
+    acorn-jsx "^4.1.1"
+
 esprima@^4.0.0, esprima@^4.0.1:
   version "4.0.1"
   resolved "https://npm.garenanow.com/esprima/-/esprima-4.0.1.tgz#13b04cdb3e6c5d19df91ab6987a8695619b0aa71"
@@ -655,6 +675,11 @@ flatmap-stream@^0.1.0:
   version "0.1.0"
   resolved "https://npm.garenanow.com/flatmap-stream/-/flatmap-stream-0.1.0.tgz#ed54e01422cd29281800914fcb968d58b685d5f1"
   integrity sha512-Nlic4ZRYxikqnK5rj3YoxDVKGGtUjcNDUtvQ7XsdGLZmMwdUYnXf10o1zcXtzEZTBgc6GxeRpQxV/Wu3WPIIHA==
+
+flow-parser@^0.82.0:
+  version "0.82.0"
+  resolved "https://npm.garenanow.com/flow-parser/-/flow-parser-0.82.0.tgz#0ebb30452ecd5c3c620c8840a1f5a655cc1f8f7d"
+  integrity sha512-i8ueY4QHz19VELwGIXiDpp0B2FUSQbOWnPNqnBECjXeUneN9sz6Sqc7olJyzUBWdhCoHHSE9ydYWmkyYmfmNHw==
 
 for-in@^1.0.1:
   version "1.0.2"
@@ -1104,6 +1129,11 @@ json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://npm.garenanow.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
+
+json-to-ast@^2.0.5:
+  version "2.0.5"
+  resolved "https://npm.garenanow.com/json-to-ast/-/json-to-ast-2.0.5.tgz#86bc652e7b51b5a11dcc387e3d32738427d38f54"
+  integrity sha512-rKTfvT5WWXCjzs1MThg54ExXauw02FthhNofb9YJFXc/MkYgE865wqMYJmLBLMqQqdWPRDvU2bSOb81uIMMWOg==
 
 jsonify@~0.0.0:
   version "0.0.0"
@@ -1759,10 +1789,10 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://npm.garenanow.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
-typescript@^2.6.1:
-  version "2.9.2"
-  resolved "https://npm.garenanow.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
-  integrity sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
+typescript@^3.1.2:
+  version "3.1.2"
+  resolved "https://npm.garenanow.com/typescript/-/typescript-3.1.2.tgz#c03a5d16f30bb60ad8bb6fe8e7cb212eedeec950"
+  integrity sha512-gOoGJWbNnFAfP9FlrSV63LYD5DJqYJHG5ky1kOXSl3pCImn4rqWy/flyq1BRd4iChQsoCqjbQaqtmXO4yCVPCA==
 
 unique-stream@^2.0.2:
   version "2.2.1"
