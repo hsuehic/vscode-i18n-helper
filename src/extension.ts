@@ -18,7 +18,10 @@ import {
   DecorationOptions,
   Range,
   CompletionItemKind,
-  WorkspaceEdit
+  WorkspaceEdit,
+  Definition,
+  ProviderResult,
+  DefinitionLink
 } from 'vscode';
 import { getConfig } from './config';
 import { createIntlCompletionItem } from './createIntlCompletionItem';
@@ -126,6 +129,19 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  const disposableGoDefinition = languages.registerDefinitionProvider(
+    ['javascript', 'typescript', 'javascriptreact', 'typescriptreact'],
+    {
+      provideDefinition(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+      ): ProviderResult<Definition | DefinitionLink[]> {
+        activeTextEditor.document.getWordRangeAtPosition();
+      }
+    }
+  );
+
   let timer;
   function triggerUpdateDecorations() {
     if (timer) {
@@ -185,8 +201,6 @@ export function activate(context: ExtensionContext) {
   const disposableDictionaryWatcher = dictionaryWatcher.onDidChange(e => {
     completionItems = [createIntlCompletionItem()];
     dictionary = getDictionary();
-    console.log('Dictionary updated:');
-    console.log(JSON.stringify(dictionary));
     triggerUpdateDecorations();
   });
 

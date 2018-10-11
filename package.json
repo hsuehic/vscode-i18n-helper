@@ -1,9 +1,14 @@
 {
   "name": "vscode-i18n-helper",
-  "displayName": "Intl Helper",
+  "displayName": "I18n Helper",
   "description": "A plugin help to do internationalization work",
   "version": "0.0.1",
   "publisher": "Xiaowei",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hsuehic/vscode-i18n-helper.git"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.27.0"
   },
@@ -121,17 +126,20 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",
-    "@types/node": "^8.10.25"
+    "@types/node": "^8.10.25",
+    "typescript-eslint-parser": "^20.0.0"
   },
   "dependencies": {
     "@types/eslint": "^4.16.3",
+    "@types/esprima": "^4.0.2",
+    "@types/lodash": "^4.14.117",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.6.1",
     "espree": "^4.0.0",
     "esprima": "^4.0.1",
     "flow-parser": "^0.82.0",
     "json-to-ast": "^2.0.5",
-    "loadash": "^1.0.0",
+    "lodash": "^4.17.11",
     "tslint": "^5.8.0",
     "typescript": "^3.1.2",
     "vscode": "^1.1.21"
