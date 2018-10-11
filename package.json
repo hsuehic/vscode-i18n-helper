@@ -124,7 +124,9 @@
     "@types/node": "^8.10.25"
   },
   "dependencies": {
+    "@types/eslint": "^4.16.3",
     "babel-eslint": "^10.0.1",
+    "eslint": "^5.6.1",
     "espree": "^4.0.0",
     "esprima": "^4.0.1",
     "flow-parser": "^0.82.0",
