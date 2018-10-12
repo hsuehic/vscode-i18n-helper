@@ -33,13 +33,14 @@ export const removeModuleCache = (fullModuleName: string) => {
       delete require.cache[fullModuleName];
 
       // remove path cache
-      const pathCaches = Object.keys(module.constructor._pathCache);
+      // notslint
+      const pathCaches = Object.keys(module.constructor['_pathCache']);
       const len = pathCaches.length;
-      let pathCache: ?string;
-      for (let i:number = 0; i < len; i++ ) {
+      let pathCache: string;
+      for (let i: number = 0; i < len; i++) {
         pathCache = pathCaches[i];
         if (pathCache.indexOf(fullModuleName) > -1) {
-          delete module.constructor._pathCache[pathCache];
+          delete module.constructor['_pathCache'][pathCache];
         }
       }
     }

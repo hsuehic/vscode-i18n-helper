@@ -1,5 +1,4 @@
 import { getDictionary } from './getDictionary';
-import { getAstFromECMAScript } from './utils';
 import { ParseOptions, parseForEslint } from 'babel-eslint';
 /**
  * utils.js
@@ -86,7 +85,7 @@ export const i18nReplaceAllDocuments = (dictionary: object) => {};
  */
 export const getI18nDefinitionsFromJson = (
   document: TextDocument
-): Map<string, JsonLiteral> => {
+): Map<string, Definition> => {
   const i18nDefinitions = new Map<string, Definition>();
   const settings: JsonParseSettings = {
     loc: true,
@@ -96,13 +95,13 @@ export const getI18nDefinitionsFromJson = (
   if (json && json.children && json.children.length > 0) {
     const properties = json.children;
     properties.map((property: JsonProperty) => {
-      const key = property.key;
+      const key = property.key.value;
       const definition: Definition = {
         uri: document.uri,
-        range: {
-          start: document.positionAt(property.loc.start.offset),
-          end: document.positionAt(property.loc.end.offset)
-        }
+        range: new Range(
+          document.positionAt(property.loc.start.offset),
+          document.positionAt(property.loc.end.offset)
+        )
       };
       i18nDefinitions.set(key, definition);
       return property;
@@ -141,10 +140,10 @@ export const getAstFromECMAScript = (document: TextDocument): AST.Program => {
  * exchange key and value, convinence for to get key by value. Values must be unique.
  * @param obj object to be converted
  */
-export const exchangeKeyValue = (obj: Object): Map => {
-  const exchangedObject = new Map();
+export const exchangeKeyValue = (obj: Object): Map<any, any> => {
+  const exchangedObject = new Map<any, any>();
   for (let key in obj) {
-    exchangedObject.add(obj[key], key);
+    exchangedObject.set(obj[key], key);
   }
   return exchangedObject;
 };
@@ -170,7 +169,9 @@ export const inNodeSpan = (node: EslintNode, position: Position): boolean => {
  * get the minimum node with the given position
  * @param node 从节点
  */
-export const getMinimumNode = (node: EslintNode, position: Position): EslintNode {
-  
+export const getMinimumNode = (
+  node: EslintNode,
+  position: Position
+): EslintNode => {
+  return null;
 };
-

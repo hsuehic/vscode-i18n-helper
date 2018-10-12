@@ -67,7 +67,7 @@ export function activate(context: ExtensionContext) {
 
   // enable validation
   const disposableEnableValidation = commands.registerCommand(
-    'intlHelper.enableValidation',
+    'i18nHelper.enableValidation',
     () => {
       window.showInformationMessage('I18n validation enabled');
     }
@@ -75,7 +75,7 @@ export function activate(context: ExtensionContext) {
 
   // disable validation
   const disposableDisableValidation = commands.registerCommand(
-    'intlHelper.disableValidation',
+    'i18nHelper.disableValidation',
     () => {
       window.showInformationMessage('I18n validation disabled');
     }
@@ -83,7 +83,7 @@ export function activate(context: ExtensionContext) {
 
   // replace selection with i18n statement
   const disposableReplaceWithI18n = commands.registerCommand(
-    'intlHelper.replaceWithI18n',
+    'i18nHelper.replaceWithI18n',
     () => {
       i18nReplace(dictionary, false);
     }
@@ -91,7 +91,7 @@ export function activate(context: ExtensionContext) {
 
   // replace selection with i18n container statement
   const disposableReplaceWithI18nContainer = commands.registerCommand(
-    'intlHelper.replaceWithI18nContainer',
+    'i18nHelper.replaceWithI18nContainer',
     () => {
       i18nReplace(dictionary, true);
     }
@@ -99,7 +99,7 @@ export function activate(context: ExtensionContext) {
 
   // replace all literal with i18n statement
   const disposableReplaceAllWithI18n = commands.registerCommand(
-    'intlHelper.replaceCurrentDocumentWithI18n',
+    'i18nHelper.replaceCurrentDocumentWithI18n',
     () => {
       i18nReplaceCurrentDocument(dictionary);
     }
@@ -107,7 +107,7 @@ export function activate(context: ExtensionContext) {
 
   // replace all literal with i18n container statement
   const disposableReplaceAllWithI18nContainer = commands.registerCommand(
-    'intlHelper.replaceAllDocumentsWithI18n',
+    'i18nHelper.replaceAllDocumentsWithI18n',
     () => {
       i18nReplaceAllDocuments(dictionary);
     }
@@ -137,7 +137,7 @@ export function activate(context: ExtensionContext) {
         position: Position,
         token: CancellationToken
       ): ProviderResult<Definition | DefinitionLink[]> {
-        activeTextEditor.document.getWordRangeAtPosition();
+        return [];
       }
     }
   );

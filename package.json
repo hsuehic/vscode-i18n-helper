@@ -48,69 +48,69 @@
     ],
     "commands": [
       {
-        "command": "intlHelper.disableValidation",
+        "command": "i18nHelper.disableValidation",
         "title": "Disable validation",
-        "category": "Intl"
+        "category": "I18n"
       },
       {
-        "command": "intlHelper.enableValidation",
+        "command": "i18nHelper.enableValidation",
         "title": "Enable validation",
-        "category": "Intl"
+        "category": "I18n"
       },
       {
-        "command": "intlHelper.replaceWithI18n",
+        "command": "i18nHelper.replaceWithI18n",
         "title": "Replace selection with i18n statement",
-        "category": "Intl"
+        "category": "I18n"
       },
       {
-        "command": "intlHelper.replaceWithI18nContainer",
+        "command": "i18nHelper.replaceWithI18nContainer",
         "title": "Replace selection with i18n container statement",
-        "category": "Intl"
+        "category": "I18n"
       },
       {
-        "command": "intlHelper.replaceAllWithI18n",
+        "command": "i18nHelper.replaceAllWithI18n",
         "title": "Replace all literal with i18n statement",
-        "category": "Intl"
+        "category": "I18n"
       },
       {
-        "command": "intlHelper.replaceAllWithI18nContainer",
+        "command": "i18nHelper.replaceAllWithI18nContainer",
         "title": "Replace all literal with i18n container statement",
-        "category": "Intl"
+        "category": "I18n"
       }
     ],
     "keybindings": [
       {
-        "command": "intlHelper.replaceWithI18n",
+        "command": "i18nHelper.replaceWithI18n",
         "key": "ctrl+alt+1",
         "mac": "cmd+alt+1",
         "when": "editorTextFocus"
       },
       {
-        "command": "intlHelper.replaceWithI18nContainer",
+        "command": "i18nHelper.replaceWithI18nContainer",
         "key": "ctrl+alt+2",
         "mac": "cmd+alt+2",
         "when": "editorTextFocus"
       },
       {
-        "command": "intlHelper.replaceCurrentDocumentWithI18n",
+        "command": "i18nHelper.replaceCurrentDocumentWithI18n",
         "key": "ctrl+alt+3",
         "mac": "cmd+alt+3",
         "when": "editorTextFocus"
       },
       {
-        "command": "intlHelper.replaceAllDocumentsWithI18n",
+        "command": "i18nHelper.replaceAllDocumentsWithI18n",
         "key": "ctrl+alt+4",
         "mac": "cmd+alt+4",
         "when": "editorTextFocus"
       },
       {
-        "command": "intlHelper.enableValidation",
+        "command": "i18nHelper.enableValidation",
         "key": "ctrl+alt+5",
         "mac": "cmd+alt+5",
         "when": "editorTextFocus"
       },
       {
-        "command": "intlHelper.disableValidation",
+        "command": "i18nHelper.disableValidation",
         "key": "ctrl+alt+6",
         "mac": "cmd+alt+6",
         "when": "editorTextFocus"
