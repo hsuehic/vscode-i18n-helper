@@ -92,6 +92,7 @@ export const getI18nDefinitionsFromJson = (
     source: ''
   };
   const json: JsonObject = jsonParse(document.getText(), settings);
+
   if (json && json.children && json.children.length > 0) {
     const properties = json.children;
     properties.map((property: JsonProperty) => {
