@@ -27,7 +27,6 @@ import {
   JsonProperty
 } from 'json-to-ast';
 
-import { AST } from 'eslint';
 import { BaseNode, Program } from 'estree';
 
 /**
@@ -119,7 +118,7 @@ export const getI18nDefinitionsFromJavascript = (
   document: TextDocument
 ): Map<string, Definition> => {
   const i18nDefinition = new Map<string, Definition>();
-  const ast: AST.Program = getAstFromECMAScript(document);
+  const ast: Program = getAstFromECMAScript(document);
   const dictionary = getDictionary();
 
   return i18nDefinition;
@@ -129,10 +128,10 @@ export const getI18nDefinitionsFromJavascript = (
  * get ast of the passed in document, using babel-eslint parser
  * @param document TextDocument, a text document
  */
-export const getAstFromECMAScript = (document: TextDocument): AST.Program => {
+export const getAstFromECMAScript = (document: TextDocument): Program => {
   const code = document.getText();
   const options = {
-    ecmaVerion: 2017
+    ecmaVersion: 2017
   };
   return parseForEslint(code, options);
 };

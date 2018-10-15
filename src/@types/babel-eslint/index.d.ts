@@ -8,15 +8,15 @@
  *~ file should be 'super-greeter/index.d.ts'
  */
 
-/*~ On this line, import the module which this module adds to */
-import * as Estree from 'estree';
-
 /*~ Here, declare the same module as the one you imported above */
 declare module 'babel-eslint' {
+  /*~ On this line, import the module which this module adds to */
+  import * as Estree from 'estree';
+
   interface ParseOptions {
-    ecmaVersion: 3 | 5 | 6 | 7 | 8 | 9 | 10 | 2015 | 2016 | 2017 | 2018 | 2019;
-    sourceType: 'script' | 'module';
-    allowImportExportEverywhere: boolean;
+    ecmaVersion?: number;
+    sourceType?: 'script' | 'module';
+    allowImportExportEverywhere?: boolean;
   }
 
   export function parse(code: string, options?: ParseOptions): Estree.Program;
