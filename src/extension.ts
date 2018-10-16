@@ -18,7 +18,10 @@ import {
   WorkspaceEdit,
   Definition,
   ProviderResult,
-  DefinitionLink
+  DefinitionLink,
+  Diagnostic,
+  DiagnosticCollection,
+  DiagnosticSeverity
 } from 'vscode';
 import { getConfig } from './config';
 import { createIntlCompletionItem } from './createIntlCompletionItem';
@@ -76,6 +79,7 @@ function updateDictionary() {
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
   updateDictionary();
+  let diagnosticCollection: DiagnosticCollection = languages.createDiagnosticCollection('i18n');
   
   let activeTextEditor = window.activeTextEditor;
 
@@ -203,13 +207,15 @@ export function activate(context: ExtensionContext) {
    * Update i18n keys decorations, by walking the ast
    */
   function updateDecorationsByWalkingAst() {
+    diagnosticCollection.clear();
     if (activeTextEditor) {
       let document = activeTextEditor.document;
       if (document) {
         try {
-          let text = document.getText();
-          let i18nKeys: DecorationOptions[] = [];
-          let literals: DecorationOptions[] = [];
+          const text = document.getText();
+          const i18nKeys: DecorationOptions[] = [];
+          const literals: DecorationOptions[] = [];
+          const diagnostics: Diagnostic[] = [];
           if (isHighlightEnabled) {
             let functionId = getConfig(KEY_INTL_FUNCTION_NAME);
             const ast: Program = parse(text, {
@@ -243,10 +249,12 @@ export function activate(context: ExtensionContext) {
                       if (i18nContent) {
                         const i18nKey = exchangedDictionary.get(i18nContent);
                         const hoverMessage = i18nKey ? `please replace with ${functionId}('${i18nKey}')` : 'This is not a corresponding key for this literal, please add one.';
-                        literals.push({
-                          range: new Range(document.positionAt(node.start), document.positionAt(node.end)),
-                          hoverMessage
-                        });
+                        const range = new Range(document.positionAt(node.start), document.positionAt(node.end));
+                        // literals.push({
+                        //   range,
+                        //   hoverMessage
+                        // });
+                        diagnostics.push(new Diagnostic(range, hoverMessage, DiagnosticSeverity.Warning));
                       }
                     }
                   }
@@ -256,6 +264,7 @@ export function activate(context: ExtensionContext) {
           }
           activeTextEditor.setDecorations(decorationType, i18nKeys);
           activeTextEditor.setDecorations(decorationTypeError, literals);
+          diagnosticCollection.set(document.uri, diagnostics);
         } catch (ex) {
           console.error(ex);
         }
@@ -299,6 +308,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(disposableReplaceWithI18n);
   context.subscriptions.push(disposableReplaceWithI18nContainer);
   context.subscriptions.push(disposableCompletion);
+  context.subscriptions.push(diagnosticCollection);
 }
 
 // this method is called when your extension is deactivated
