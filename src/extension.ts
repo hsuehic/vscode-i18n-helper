@@ -35,13 +35,14 @@ import {
 let completionItems: CompletionItem[] = [];
 let dictionaryWatcher: FileSystemWatcher | undefined;
 let dictionary: Object = {};
+let isHighlightEnabled = true;
 
 const decorationType = window.createTextEditorDecorationType({
   backgroundColor: 'rgba(233, 233, 0, 0.5)',
   color: '#ffffff'
 });
 
-function getIntlKeyDecoration(match: RegExpMatchArray) {
+function getI18nKeyDecoration(match: RegExpMatchArray) {
   const len = match.length;
   let key = match[1];
   for (let i = 2; i < len; i++) {
@@ -69,6 +70,8 @@ export function activate(context: ExtensionContext) {
   const disposableEnableValidation = commands.registerCommand(
     'i18nHelper.enableValidation',
     () => {
+      isHighlightEnabled = true;
+      triggerUpdateDecorations();
       window.showInformationMessage('I18n validation enabled');
     }
   );
@@ -77,6 +80,8 @@ export function activate(context: ExtensionContext) {
   const disposableDisableValidation = commands.registerCommand(
     'i18nHelper.disableValidation',
     () => {
+      isHighlightEnabled = false;
+      triggerUpdateDecorations();
       window.showInformationMessage('I18n validation disabled');
     }
   );
@@ -147,7 +152,7 @@ export function activate(context: ExtensionContext) {
     if (timer) {
       clearTimeout(timer);
     }
-    timer = setTimeout(updateDecorations, 500);
+    timer = setTimeout(updateDecorations, 300);
   }
 
   /**
@@ -159,15 +164,17 @@ export function activate(context: ExtensionContext) {
       if (document) {
         try {
           let text = document.getText();
-          let intlKeys: DecorationOptions[] = [];
-          let pattern = getConfig(KEY_INTL_STATEMENT_PATTERN);
-          let reg = new RegExp(pattern, 'igm');
-          let match = reg.exec(text);
-          while (match) {
-            intlKeys.push(getIntlKeyDecoration(match));
-            match = reg.exec(text);
+          let i18nKeys: DecorationOptions[] = [];
+          if (isHighlightEnabled) {
+            let pattern = getConfig(KEY_INTL_STATEMENT_PATTERN);
+            let reg = new RegExp(pattern, 'igm');
+            let match = reg.exec(text);
+            while (match) {
+              i18nKeys.push(getI18nKeyDecoration(match));
+              match = reg.exec(text);
+            }
           }
-          activeTextEditor.setDecorations(decorationType, intlKeys);
+          activeTextEditor.setDecorations(decorationType, i18nKeys);
         } catch (ex) {
           console.error(ex);
         }
