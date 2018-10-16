@@ -17,6 +17,6 @@ export function createIntlCompletionItem(): CompletionItem {
   item.insertText = new SnippetString(
     functionName + "('${1|" + suggestions + "|}')"
   );
-  item.documentation = new MarkdownString('Insert a intl statement');
+  item.documentation = new MarkdownString('Insert a i18n statement');
   return item;
 }

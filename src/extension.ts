@@ -1,8 +1,5 @@
 import * as path from 'path';
-import {
-  KEY_INTL_DICTIONARY_PATH,
-  KEY_INTL_STATEMENT_PATTERN
-} from './constant';
+import { KEY_INTL_DICTIONARY_PATH, KEY_INTL_FUNCTION_NAME } from './constant';
 import {
   commands,
   languages,
@@ -156,7 +153,7 @@ export function activate(context: ExtensionContext) {
   }
 
   /**
-   * Update intl keys decorations
+   * Update i18n keys decorations, using regex search
    */
   function updateDecorations() {
     if (activeTextEditor) {
@@ -166,8 +163,11 @@ export function activate(context: ExtensionContext) {
           let text = document.getText();
           let i18nKeys: DecorationOptions[] = [];
           if (isHighlightEnabled) {
-            let pattern = getConfig(KEY_INTL_STATEMENT_PATTERN);
-            let reg = new RegExp(pattern, 'igm');
+            let functionId = getConfig(KEY_INTL_FUNCTION_NAME);
+            let reg = new RegExp(
+              `[\\s\\{(]${functionId}\\(('|\\\")([a-zA-Z)[0-9A-Za-z-_\\.]*)\\1\\)`,
+              'igm'
+            );
             let match = reg.exec(text);
             while (match) {
               i18nKeys.push(getI18nKeyDecoration(match));
