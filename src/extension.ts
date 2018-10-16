@@ -26,25 +26,35 @@ import { getDictionary } from './getDictionary';
 import {
   i18nReplace,
   i18nReplaceCurrentDocument,
-  i18nReplaceAllDocuments
+  i18nReplaceAllDocuments,
+  exchangeKeyValue
 } from './utils';
+import { Program, Node, BaseNode } from 'estree';
+const parse = require('babel-eslint').parse;
+const walk = require('estree-walker').walk;
 
 let completionItems: CompletionItem[] = [];
 let dictionaryWatcher: FileSystemWatcher | undefined;
-let dictionary: Object = {};
+let dictionary: object = {};
+let exchangedDictionary: object = {};
 let isHighlightEnabled = true;
 
 const decorationType = window.createTextEditorDecorationType({
-  backgroundColor: 'rgba(233, 233, 0, 0.5)',
+  backgroundColor: 'rgba(0, 218, 0, 0.3)',
   color: '#ffffff'
 });
 
+const decorationTypeError = window.createTextEditorDecorationType({
+  backgroundColor: 'rgba(218, 0, 0, 0.3)',
+  color: '#ffffff'
+});
+
+const regEmpty = /^\s+$/g;
+const regLeadingAndTrailingBlanks = /(^\s+)|(\s+$)/mg;
+
 function getI18nKeyDecoration(match: RegExpMatchArray) {
   const len = match.length;
-  let key = match[1];
-  for (let i = 2; i < len; i++) {
-    key = match[i] || key;
-  }
+  let key = match[2];
   let startIndex = match.index + match[0].indexOf(key);
   let endIndex = startIndex + key.length;
   const document = window.activeTextEditor.document;
@@ -57,10 +67,16 @@ function getI18nKeyDecoration(match: RegExpMatchArray) {
   };
 }
 
+function updateDictionary() {
+  dictionary = getDictionary();
+  exchangedDictionary = exchangeKeyValue(dictionary);
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-  dictionary = getDictionary();
+  updateDictionary();
+  
   let activeTextEditor = window.activeTextEditor;
 
   // enable validation
@@ -149,7 +165,8 @@ export function activate(context: ExtensionContext) {
     if (timer) {
       clearTimeout(timer);
     }
-    timer = setTimeout(updateDecorations, 300);
+    // timer = setTimeout(updateDecorations, 300); 
+    timer = setTimeout(updateDecorationsByWalkingAst, 300);
   }
 
   /**
@@ -182,6 +199,70 @@ export function activate(context: ExtensionContext) {
     }
   }
 
+  /**
+   * Update i18n keys decorations, by walking the ast
+   */
+  function updateDecorationsByWalkingAst() {
+    if (activeTextEditor) {
+      let document = activeTextEditor.document;
+      if (document) {
+        try {
+          let text = document.getText();
+          let i18nKeys: DecorationOptions[] = [];
+          let literals: DecorationOptions[] = [];
+          if (isHighlightEnabled) {
+            let functionId = getConfig(KEY_INTL_FUNCTION_NAME);
+            const ast: Program = parse(text, {
+              ecmaVersion: 2017,
+              sourceType: 'module'
+            });
+            walk(ast, {
+              enter: (node: Node, parent: Node) => {},
+              leave: (node: BaseNode, parent: BaseNode) => {
+                const { type, callee, } = node;
+                if (type === 'CallExpression') { // highlight i18n keys
+                  if (callee.name === functionId) {
+                    if (node.arguments.length > 0) {
+                      let arg0 = node.arguments[0];
+                      const { start, end, value: key } = arg0;
+                      if (arg0.type === 'Literal') {
+                        i18nKeys.push({
+                          range: new Range(
+                            document.positionAt(start),
+                            document.positionAt(end)
+                          ),
+                          hoverMessage: dictionary[key];
+                        });
+                      }
+                    }
+                  }
+                } else if (type === 'Literal') { // check for literals
+                  if (parent.type === 'JSXElement') {
+                    if (!regEmpty.test(node.raw)) {
+                      const i18nContent = node.raw.replace(regLeadingAndTrailingBlanks, '');
+                      if (i18nContent) {
+                        const i18nKey = exchangedDictionary.get(i18nContent);
+                        const hoverMessage = i18nKey ? `please replace with ${functionId}('${i18nKey}')` : 'This is not a corresponding key for this literal, please add one.';
+                        literals.push({
+                          range: new Range(document.positionAt(node.start), document.positionAt(node.end)),
+                          hoverMessage
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+          activeTextEditor.setDecorations(decorationType, i18nKeys);
+          activeTextEditor.setDecorations(decorationTypeError, literals);
+        } catch (ex) {
+          console.error(ex);
+        }
+      }
+    }
+  }
+
   if (activeTextEditor) {
     triggerUpdateDecorations();
   }
@@ -207,7 +288,7 @@ export function activate(context: ExtensionContext) {
   dictionaryWatcher = workspace.createFileSystemWatcher(dictionaryFullPath);
   const disposableDictionaryWatcher = dictionaryWatcher.onDidChange(e => {
     completionItems = [createIntlCompletionItem()];
-    dictionary = getDictionary();
+    updateDictionary();
     triggerUpdateDecorations();
   });
 
