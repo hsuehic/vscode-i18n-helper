@@ -1,8 +1,8 @@
 {
   "name": "vscode-i18n-helper",
   "displayName": "I18n Helper",
-  "description": "A plugin help to do internationalization work",
-  "version": "0.0.1",
+  "description": "A plugin help to do internationalization staff",
+  "version": "0.0.2",
   "publisher": "Xiaowei",
   "repository": {
     "type": "git",
