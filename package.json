@@ -28,11 +28,6 @@
         "title": "I18n Helper",
         "type": "object",
         "properties": {
-          "i18n.pattern": {
-            "type": "string",
-            "default": "[\\s\\{(]intl\\(('|\\\")([a-zA-Z)[0-9A-Za-z-_\\.]*)\\1\\)",
-            "description": "i18n statement pattern"
-          },
           "i18n.dictionaryFilePath": {
             "type": "string",
             "default": "src/locale/en.json",
