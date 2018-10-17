@@ -30,16 +30,31 @@ import {
   i18nReplace,
   i18nReplaceCurrentDocument,
   i18nReplaceAllDocuments,
-  exchangeKeyValue
+  exchangeKeyValue,
+  i18nEdit
 } from './utils';
-import { Program, Node, BaseNode } from 'estree';
+import {
+  Program,
+  Node,
+  BaseNode,
+  CallExpression,
+  SimpleCallExpression
+} from 'estree';
+import { I18nCodeActionProvider } from './I18nCodeActionProvider';
 const parse = require('babel-eslint').parse;
 const walk = require('estree-walker').walk;
+
+const documentSelector = [
+  'javascript',
+  'typescript',
+  'javascriptreact',
+  'typescriptreact'
+];
 
 let completionItems: CompletionItem[] = [];
 let dictionaryWatcher: FileSystemWatcher | undefined;
 let dictionary: object = {};
-let exchangedDictionary: object = {};
+let exchangedDictionary: Map<string, string> = new Map<string, string>();
 let isHighlightEnabled = true;
 
 const decorationType = window.createTextEditorDecorationType({
@@ -53,7 +68,7 @@ const decorationTypeError = window.createTextEditorDecorationType({
 });
 
 const regEmpty = /^\s+$/g;
-const regLeadingAndTrailingBlanks = /(^\s+)|(\s+$)/mg;
+const regLeadingAndTrailingBlanks = /(^\s+)|(\s+$)/gm;
 
 function getI18nKeyDecoration(match: RegExpMatchArray) {
   const len = match.length;
@@ -79,8 +94,10 @@ function updateDictionary() {
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
   updateDictionary();
-  let diagnosticCollection: DiagnosticCollection = languages.createDiagnosticCollection('i18n');
-  
+  let diagnosticCollection: DiagnosticCollection = languages.createDiagnosticCollection(
+    'i18n'
+  );
+
   let activeTextEditor = window.activeTextEditor;
 
   // enable validation
@@ -135,6 +152,15 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  const disposableFixLiteralCodeAction = commands.registerCommand(
+    'i18nHelper.fixLiteralCodeAction',
+    (document: TextDocument, range: Range, diagnostic: Diagnostic) => {
+      if (diagnostic.code) {
+        i18nEdit(document, range, diagnostic.code.toString(), true);
+      }
+    }
+  );
+
   completionItems = [createIntlCompletionItem()];
 
   const disposableCompletion = languages.registerCompletionItemProvider(
@@ -152,7 +178,7 @@ export function activate(context: ExtensionContext) {
   );
 
   const disposableGoDefinition = languages.registerDefinitionProvider(
-    ['javascript', 'typescript', 'javascriptreact', 'typescriptreact'],
+    documentSelector,
     {
       provideDefinition(
         document: TextDocument,
@@ -169,7 +195,7 @@ export function activate(context: ExtensionContext) {
     if (timer) {
       clearTimeout(timer);
     }
-    // timer = setTimeout(updateDecorations, 300); 
+    // timer = setTimeout(updateDecorations, 300);
     timer = setTimeout(updateDecorationsByWalkingAst, 300);
   }
 
@@ -225,11 +251,14 @@ export function activate(context: ExtensionContext) {
             walk(ast, {
               enter: (node: Node, parent: Node) => {},
               leave: (node: BaseNode, parent: BaseNode) => {
-                const { type, callee, } = node;
-                if (type === 'CallExpression') { // highlight i18n keys
+                const { type } = node;
+                if (type === 'CallExpression') {
+                  const callExpression: SimpleCallExpression = node as SimpleCallExpression;
+                  const { callee } = callExpression;
+                  // highlight i18n keys
                   if (callee.name === functionId) {
-                    if (node.arguments.length > 0) {
-                      let arg0 = node.arguments[0];
+                    if (callExpression.arguments.length > 0) {
+                      let arg0 = callExpression.arguments[0];
                       const { start, end, value: key } = arg0;
                       if (arg0.type === 'Literal') {
                         i18nKeys.push({
@@ -237,24 +266,43 @@ export function activate(context: ExtensionContext) {
                             document.positionAt(start),
                             document.positionAt(end)
                           ),
-                          hoverMessage: dictionary[key];
+                          hoverMessage: dictionary[key]
                         });
                       }
                     }
                   }
-                } else if (type === 'Literal') { // check for literals
+                } else if (type === 'Literal') {
+                  // check for literals
                   if (parent.type === 'JSXElement') {
                     if (!regEmpty.test(node.raw)) {
-                      const i18nContent = node.raw.replace(regLeadingAndTrailingBlanks, '');
+                      const i18nContent = node.raw.replace(
+                        regLeadingAndTrailingBlanks,
+                        ''
+                      );
                       if (i18nContent) {
+                        const index = node.raw.indexOf(i18nContent);
+                        const start = node.start + index;
+                        const end = start + i18nContent.length;
                         const i18nKey = exchangedDictionary.get(i18nContent);
-                        const hoverMessage = i18nKey ? `please replace with ${functionId}('${i18nKey}')` : 'This is not a corresponding key for this literal, please add one.';
-                        const range = new Range(document.positionAt(node.start), document.positionAt(node.end));
+                        const hoverMessage = i18nKey
+                          ? `please replace with ${functionId}('${i18nKey}')`
+                          : 'This is not a corresponding key for this literal, please add one.';
+                        const range = new Range(
+                          document.positionAt(start),
+                          document.positionAt(end)
+                        );
                         // literals.push({
                         //   range,
                         //   hoverMessage
                         // });
-                        diagnostics.push(new Diagnostic(range, hoverMessage, DiagnosticSeverity.Warning));
+                        const diagnostic = new Diagnostic(
+                          range,
+                          hoverMessage,
+                          DiagnosticSeverity.Error
+                        );
+                        diagnostic.code = i18nKey;
+                        diagnostic.source = 'i18n';
+                        diagnostics.push(diagnostic);
                       }
                     }
                   }
@@ -309,6 +357,13 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(disposableReplaceWithI18nContainer);
   context.subscriptions.push(disposableCompletion);
   context.subscriptions.push(diagnosticCollection);
+  context.subscriptions.push(
+    languages.registerCodeActionsProvider(
+      documentSelector,
+      new I18nCodeActionProvider()
+    )
+  );
+  context.subscriptions.push(disposableFixLiteralCodeAction);
 }
 
 // this method is called when your extension is deactivated

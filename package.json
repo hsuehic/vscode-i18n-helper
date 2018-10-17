@@ -112,6 +112,10 @@
       }
     ]
   },
+  "capabilities": {
+    "codeActionProvider": "true",
+    "hoverProvider": "true"
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

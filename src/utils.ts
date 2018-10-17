@@ -30,6 +30,25 @@ import {
 import { BaseNode, Program } from 'estree';
 
 /**
+ *
+ * @param document document need to be edited.
+ * @param range
+ * @param key
+ * @param
+ */
+export const i18nEdit = (
+  document: TextDocument,
+  range: Range,
+  key: string,
+  withContainer: boolean = true
+) => {
+  const edit = new WorkspaceEdit();
+  const newText = withContainer ? `{intl('${key}')}` : `intl('${key}')`;
+  edit.replace(document.uri, range, newText);
+  workspace.applyEdit(edit);
+};
+
+/**
  * Replace selection with i18n statement
  * @param dictionary object, i18n dictionary
  * @param withContainer boolean, indicate if wrapped with bracket
@@ -50,10 +69,7 @@ export const i18nReplace = (
       for (let i = 0; i < keys.length; i++) {
         key = keys[i];
         if (dictionary[key] === text) {
-          const edit = new WorkspaceEdit();
-          const newText = withContainer ? `{intl('${key}')}` : `intl('${key}')`;
-          edit.replace(document.uri, range, newText);
-          workspace.applyEdit(edit);
+          i18nEdit(document, range, key);
           return;
         }
       }
